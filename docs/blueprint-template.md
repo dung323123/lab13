@@ -78,7 +78,10 @@
   - Validate logs schema `validate_logs.py`
   - Viết doc logging pipeline design
 - [EVIDENCE_LINK]: `git log --author="dung323123" --oneline`
-- [KEY_LEARNINGS]: [Describe lessons on structured logging, PII patterns, correlation propagation]
+- [KEY_LEARNINGS]:
+  1. `merge_contextvars` phải là processor đầu tiên trong chain — nếu đặt sau thì `correlation_id` từ middleware không xuất hiện trong log.
+  2. Middleware đọc `x-request-id` từ header trước khi tự sinh — giúp trace xuyên suốt khi có upstream caller.
+  3. PII regex cần bám locale VN: CCCD 12 số, phone `(?:\+84|0)...`, keyword địa chỉ. Dùng `[REDACTED_TYPE]` thay vì xóa trắng để log vẫn parseable.
 
 ### Nguyễn Văn Quang (quangliz): Tracing, Metrics & Alerts
 - [TASKS_COMPLETED]:
@@ -88,7 +91,10 @@
   - Create runbook documentation in `docs/alerts.md`
   - Lead incident debugging demo (metrics → traces → logs)
 - [EVIDENCE_LINK]: `git log --author="quangliz" --oneline`
-- [KEY_LEARNINGS]: [Describe lessons on distributed tracing, SLO definition, alert response]
+- [KEY_LEARNINGS]:
+  1. Langfuse v3 bỏ `usage_details` khỏi `update_current_span()` — fix bằng cách dùng `allowed_keys` whitelist và chuyển usage vào `metadata`.
+  2. Alert window khác nhau theo loại lỗi: error rate dùng `5m` (spike nhanh), latency dùng `30m` (tránh false alarm nhất thời).
+  3. SLO có 2 thông số: `objective` (ngưỡng kỹ thuật) và `target` (% uptime) — `target: 99.5` trên 28 ngày cho phép ~3.4h breach trước khi cần hành động.
 
 ---
 
